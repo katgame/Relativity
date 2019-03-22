@@ -14,18 +14,22 @@ namespace relativityCalculator.Core.Services
 		private IAssessorRepository _assessorRepository;
 		private IRelativityRepository _relativityRepository;
 		private IAreaRepository _areaRepository;
+		private IRelativityConfig _relativityConfig;
 		private IDbHandler _idbhandler;
 		internal ValidateClaim _claimCal;
 
-        public CalculatorService(IDbHandler dbHandler, IAssessorRepository assessorRepository,
+        public CalculatorService(IDbHandler dbHandler,
+			IAssessorRepository assessorRepository,
 			IRelativityRepository relativityRepository,
-			IAreaRepository areaRepository)
+			IAreaRepository areaRepository,
+			IRelativityConfig relativityConfig)
         {
             _idbhandler = dbHandler;
 			_assessorRepository = assessorRepository;
 			_relativityRepository = relativityRepository;
 			_areaRepository = areaRepository;
-			_claimCal = new ValidateClaim(relativityRepository, _areaRepository);
+			_relativityConfig = relativityConfig;
+			_claimCal = new ValidateClaim(relativityRepository, _areaRepository, _relativityConfig, _assessorRepository);
 		}
 
 		public PolicyDetailsOutDTO GetPolicyVehicleDetails(string policyNumber)
@@ -36,6 +40,7 @@ namespace relativityCalculator.Core.Services
 		public void AddAssessor(Assessor assessor)
 		{
 			 _assessorRepository.Add(assessor);
+			 
 		}
 
 		public void UpdateAssessor(Assessor assessor)
@@ -43,10 +48,11 @@ namespace relativityCalculator.Core.Services
 			 _assessorRepository.Update(assessor);
 		}
 
-		public async Task<CalculateWriteOffOutDTO> CalculateClaim(VehicleDetail request)
-		{
 
-			var result = _claimCal.validateRelativities(request);
+
+		public async Task<CalculateWriteOffOutDTO> CalculateClaim(CalculateWriteOffInDTO request)
+		{
+			var result = _claimCal.CalculateClaim(request);
 
 			return null;
 		}

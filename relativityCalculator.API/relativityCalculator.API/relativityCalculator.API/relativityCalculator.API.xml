@@ -25,16 +25,9 @@
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="M:relativityCalculator.API.Controllers.RelativityController.CalculateClaim(relativityCalculator.Core.Models.VehicleDetail)">
+        <member name="M:relativityCalculator.API.Controllers.RelativityController.CalculateClaim(relativityCalculator.Core.DTOs.CalculateWriteOffInDTO)">
             <summary>
             Get Assessor
-            </summary>
-            <param name="request"></param>
-            <returns></returns>
-        </member>
-        <member name="M:relativityCalculator.API.Controllers.RelativityController.ImportFile(relativityCalculator.Core.Models.VehicleDetail)">
-            <summary>
-            Import Look Up sheet
             </summary>
             <param name="request"></param>
             <returns></returns>

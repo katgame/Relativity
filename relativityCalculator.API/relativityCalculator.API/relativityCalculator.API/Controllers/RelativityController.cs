@@ -125,7 +125,7 @@ namespace relativityCalculator.API.Controllers
 		[Route("api/calculateVehicle")]
 		[EnableCors("CorsPolicy")]
 		[HttpPost]
-		public async Task<IActionResult> CalculateClaim([FromBody] VehicleDetail request)
+		public async Task<IActionResult> CalculateClaim([FromBody] CalculateWriteOffInDTO request)
 		{
 			CalculateWriteOffOutDTO result;
 			try

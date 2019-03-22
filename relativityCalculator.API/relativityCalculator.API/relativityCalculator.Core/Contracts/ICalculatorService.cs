@@ -10,7 +10,7 @@ namespace relativityCalculator.Core.Contracts
     public interface ICalculatorService
     {
         PolicyDetailsOutDTO GetPolicyVehicleDetails(string policyNumber);
-		Task<CalculateWriteOffOutDTO> CalculateClaim(VehicleDetail request);
+		Task<CalculateWriteOffOutDTO> CalculateClaim(CalculateWriteOffInDTO request);
 		void AddAssessor(Assessor assessor);
 		void UpdateAssessor(Assessor assessor);
 		IEnumerable<Assessor> GetAssessorList();

@@ -6,7 +6,7 @@ using relativityCalculator.Core.Models;
 using relativityCalculator.Core.Contracts;
 using System.Linq;
 
-namespace relativityCalculator.Infrastructure.Data
+namespace relativityCalculator.Infrastructure.Repository
 {
 	public class AreaRepository : EfRepository<Assessor>, IAreaRepository
 	{

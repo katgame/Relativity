@@ -6,7 +6,7 @@ using relativityCalculator.Core.Models;
 using relativityCalculator.Core.Contracts;
 using System.Linq;
 
-namespace relativityCalculator.Infrastructure.Data
+namespace relativityCalculator.Infrastructure.Repository
 {
 	public class RelativityRepository : EfRepository<RelativityLookUp>, IRelativityRepository
 	{
@@ -22,7 +22,7 @@ namespace relativityCalculator.Infrastructure.Data
 		{
 			foreach (var item in keys)
 			{
-				item.RelativityValue = Convert.ToString(_dbContext.RelativityLookUp.FirstOrDefault(x => x.RelativityKey == item.RequestValue 
+				item.RelativityValue = Convert.ToString(_dbContext.RelativityLookUp.FirstOrDefault(x => x.RelativityKey == item.RequestValue
 				&& x.RelativityName == item.RelativityName)?.RelativityValue);
 			}
 			return keys;

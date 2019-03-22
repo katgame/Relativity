@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using relativityCalculator.Core.Contracts;
-using relativityCalculator.Infrastructure.Data;
+using relativityCalculator.Infrastructure.Repository;
 using relativityCalculator.Infrastructure.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -34,51 +34,52 @@ namespace relativityCalculator.API
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-		            services.AddMvc()
-		   .AddXmlSerializerFormatters();
+			services.AddMvc()
+			.AddXmlSerializerFormatters();
 			services.Configure<AppSettings>(Configuration.GetSection("Connections"));
 			services.AddDbContext<RelativitiesContext>();
 			services.AddTransient<IDbHandler, DbHandler>();
-            services.AddTransient<ICalculatorService, Core.Services.CalculatorService>();
-			services.AddTransient<IAssessorRepository,AssessorRepository>();
+			services.AddTransient<ICalculatorService, Core.Services.CalculatorService>();
+			services.AddTransient<IAssessorRepository, AssessorRepository>();
 			services.AddTransient<IRelativityRepository, RelativityRepository>();
 			services.AddTransient<IAreaRepository, AreaRepository>();
+			services.AddTransient<IRelativityConfig, RelativityConfigRepository>();
 			services.AddTransient<IAppSettings, AppSettings>();
-			
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
-            });
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info
-                {
-                    Version = "v1",
-                    Title = "Relativity API",
-                    Description = "Relativity Service API",
-                    TermsOfService = "None",
-                    Contact = new Contact
-                    {
-                        Name = "SBIBGroupIT",
-                        Email = "SBISGROUPIT@standardbank.co.za",
-                        Url = "www.standardbank.co.za"
-                    },
-                    License = new License
-                    {
-                        Name = "Use under LICX",
-                        Url = "www.standardbank.co.za"
-                    }
-                });
-                // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
-            });
+			services.AddCors(options =>
+			{
+				options.AddPolicy("CorsPolicy",
+					builder => builder.AllowAnyOrigin()
+						.AllowAnyMethod()
+						.AllowAnyHeader()
+						.AllowCredentials());
+			});
+
+			services.AddSwaggerGen(c =>
+			{
+				c.SwaggerDoc("v1", new Info
+				{
+					Version = "v1",
+					Title = "Relativity API",
+					Description = "Relativity Service API",
+					TermsOfService = "None",
+					Contact = new Contact
+					{
+						Name = "SBIBGroupIT",
+						Email = "SBISGROUPIT@standardbank.co.za",
+						Url = "www.standardbank.co.za"
+					},
+					License = new License
+					{
+						Name = "Use under LICX",
+						Url = "www.standardbank.co.za"
+					}
+				});
+				// Set the comments path for the Swagger JSON and UI.
+				var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+				c.IncludeXmlComments(xmlPath);
+			});
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

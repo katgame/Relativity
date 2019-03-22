@@ -10,6 +10,8 @@ namespace relativityCalculator.Infrastructure.Models
         public virtual DbSet<AreasLookUp> AreasLookUp { get; set; }
         public virtual DbSet<Assessor> Assessor { get; set; }
         public virtual DbSet<AuditLog> AuditLog { get; set; }
+        public virtual DbSet<AuditTrail> AuditTrail { get; set; }
+        public virtual DbSet<CompanyType> CompanyType { get; set; }
         public virtual DbSet<RelativityConfig> RelativityConfig { get; set; }
         public virtual DbSet<RelativityLookUp> RelativityLookUp { get; set; }
 
@@ -95,17 +97,109 @@ namespace relativityCalculator.Infrastructure.Models
                     .HasColumnName("workNumber")
                     .HasMaxLength(150)
                     .IsUnicode(false);
+
+                entity.HasOne(d => d.CompanyTypeNavigation)
+                    .WithMany(p => p.Assessor)
+                    .HasForeignKey(d => d.CompanyType)
+                    .HasConstraintName("FK__Assessor__Compan__1CF15040");
             });
 
             modelBuilder.Entity<AuditLog>(entity =>
             {
                 entity.Property(e => e.AuditActionTypeEnum).HasColumnName("AuditActionTypeENUM");
 
-                entity.Property(e => e.DataModel).HasMaxLength(150);
+                entity.Property(e => e.Changes).IsUnicode(false);
+
+                entity.Property(e => e.DataModel)
+                    .HasMaxLength(150)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.DateTimeStamp).HasColumnType("datetime");
 
                 entity.Property(e => e.KeyFieldId).HasColumnName("KeyFieldID");
+
+                entity.Property(e => e.ValueAfter).IsUnicode(false);
+
+                entity.Property(e => e.ValueBefore).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AuditTrail>(entity =>
+            {
+                entity.Property(e => e.AdditionalCosts)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Area)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ClaimNumer)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Comments)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CostOfSalvage)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DifferenceInCost)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ExpectedSalvageRecovery)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IncidentYear)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Recommendation)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RepairCost)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TotalCostRepair)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TotalSalvageRecovery)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VehicleMake)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VehicleMass)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VehicleModel)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VehicleSumInsured)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VehicleYear)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<CompanyType>(entity =>
+            {
+                entity.Property(e => e.CompanyType1)
+                    .HasColumnName("CompanyType")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<RelativityConfig>(entity =>
