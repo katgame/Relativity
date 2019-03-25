@@ -15,9 +15,10 @@ namespace relativityCalculator.Infrastructure.Repository
 		public AssessorRepository(RelativitiesContext dbContext) : base(dbContext)
 		{
 		}
-		public int GetCompanyPercentage(int assessorId)
+		public double GetCompanyPercentage(int assessorId)
 		{
-			return Convert.ToInt32(_dbContext.Assessor.SingleOrDefault(x => x.Id == assessorId).CompanyTypeNavigation.Percentage);
+			var assessor = _dbContext.Assessor.SingleOrDefault(x => x.Id == assessorId);
+			return Convert.ToInt32(_dbContext.CompanyType.SingleOrDefault(x => x.Id == assessor.CompanyTypeId).Percentage);
 		}
 
 	}

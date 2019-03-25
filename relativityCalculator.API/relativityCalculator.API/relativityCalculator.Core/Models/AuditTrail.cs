@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using relativityCalculator.Core.Contracts;
+using relativityCalculator.Core.Entities;
 
 namespace relativityCalculator.Core.Models
 {
-    public partial class AuditTrail
-    {
+    public partial class AuditTrail : BaseEntity, IAggregateRoot
+	{
         public int Id { get; set; }
         public string ClaimNumer { get; set; }
         public string IncidentYear { get; set; }

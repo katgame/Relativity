@@ -98,10 +98,10 @@ namespace relativityCalculator.Infrastructure.Models
                     .HasMaxLength(150)
                     .IsUnicode(false);
 
-                entity.HasOne(d => d.CompanyTypeNavigation)
+                entity.HasOne(d => d.CompanyType)
                     .WithMany(p => p.Assessor)
-                    .HasForeignKey(d => d.CompanyType)
-                    .HasConstraintName("FK__Assessor__Compan__1CF15040");
+                    .HasForeignKey(d => d.CompanyTypeId)
+                    .HasConstraintName("FK_Assessor_CompanyType");
             });
 
             modelBuilder.Entity<AuditLog>(entity =>
@@ -196,8 +196,7 @@ namespace relativityCalculator.Infrastructure.Models
 
             modelBuilder.Entity<CompanyType>(entity =>
             {
-                entity.Property(e => e.CompanyType1)
-                    .HasColumnName("CompanyType")
+                entity.Property(e => e.CompanyTypeName)
                     .HasMaxLength(50)
                     .IsUnicode(false);
             });

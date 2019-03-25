@@ -2,6 +2,7 @@
 using relativityCalculator.Core.Models;
 using System.Linq;
 using relativityCalculator.Core.Contracts;
+using System;
 
 namespace relativityCalculator.Infrastructure.Repository
 {
@@ -11,9 +12,9 @@ namespace relativityCalculator.Infrastructure.Repository
 		{
 		}
 
-		public string GetConfigValue(string propertyName)
+		public double GetConfigValue(string propertyName)
 		{
-			return _dbContext.RelativityConfig.SingleOrDefault(x => x.PropertyName == propertyName)?.PropertyValue;
+			return Convert.ToDouble(_dbContext.RelativityConfig.SingleOrDefault(x => x.PropertyName == propertyName)?.PropertyValue);
 		}
 	}
 }

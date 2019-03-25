@@ -11,9 +11,12 @@ namespace relativityCalculator.Core.DTOs
 		[DataMember(Name = "policyNumber")]
 		public string policyNumber { get; set; }
 
+		[DataMember(Name = "claimNumber")]
+		public string claimNumber { get; set; }
+
 		[DataMember(Name = "vehicleDetail")]
 		public VehicleDetail vehicleDetail { get; set; }
-		[DataMember(Name = "userId")]
-		public string userId { get; set; }
+		[DataMember(Name = "assessorId")]
+		public string assessorId { get; set; }
 	}
 }

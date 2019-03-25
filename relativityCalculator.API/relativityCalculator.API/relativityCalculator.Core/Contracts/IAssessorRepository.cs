@@ -8,7 +8,7 @@ namespace relativityCalculator.Core.Contracts
 {
 	public interface IAssessorRepository : IRepository<Assessor>, IAsyncRepository<Assessor>
 	{
-		int GetCompanyPercentage(int assessorId);
+		double GetCompanyPercentage(int assessorId);
 	
 	}
 }

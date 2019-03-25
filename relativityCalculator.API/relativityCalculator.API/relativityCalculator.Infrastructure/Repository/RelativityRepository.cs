@@ -22,7 +22,7 @@ namespace relativityCalculator.Infrastructure.Repository
 		{
 			foreach (var item in keys)
 			{
-				item.RelativityValue = Convert.ToString(_dbContext.RelativityLookUp.FirstOrDefault(x => x.RelativityKey == item.RequestValue
+				item.RelativityValue = Convert.ToDouble(_dbContext.RelativityLookUp.FirstOrDefault(x => x.RelativityKey == item.RequestValue
 				&& x.RelativityName == item.RelativityName)?.RelativityValue);
 			}
 			return keys;

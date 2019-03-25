@@ -8,7 +8,7 @@ namespace relativityCalculator.Core.Models
 	{
 		public string RelativityName { get; set; }
 		public string RequestValue { get; set; }
-		public string RelativityValue { get; set; }
+		public double? RelativityValue { get; set; }
 		public string isActive { get; set; }
 	}
 }

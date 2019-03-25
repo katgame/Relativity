@@ -52,9 +52,7 @@ namespace relativityCalculator.Core.Services
 
 		public async Task<CalculateWriteOffOutDTO> CalculateClaim(CalculateWriteOffInDTO request)
 		{
-			var result = _claimCal.CalculateClaim(request);
-
-			return null;
+			return await _claimCal.CalculateClaim(request);
 		}
 
 		public IEnumerable<Assessor> GetAssessorList()

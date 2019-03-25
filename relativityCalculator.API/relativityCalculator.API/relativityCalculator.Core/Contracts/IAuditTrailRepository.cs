@@ -4,8 +4,8 @@ using System.Text;
 using relativityCalculator.Core.Models;
 namespace relativityCalculator.Core.Contracts
 {
-	public interface IRelativityConfig : IRepository<RelativityConfig>, IAsyncRepository<RelativityConfig>
+	public interface IAuditTrailRepository : IRepository<AuditTrail>, IAsyncRepository<AuditTrail>
 	{
-		double GetConfigValue(string propertyName);
+		
 	}
 }

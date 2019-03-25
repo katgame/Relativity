@@ -20,9 +20,9 @@ namespace relativityCalculator.Core.Models
         public string City { get; set; }
         public string PostalCode { get; set; }
         public string DeviceUsed { get; set; }
-		public int? CompanyType { get; set; }
+		public int? CompanyTypeId { get; set; }
 
-		public CompanyType CompanyTypeNavigation { get; set; }
+		public CompanyType CompanyType { get; set; }
 
 
 	}

@@ -136,6 +136,8 @@ namespace relativityCalculator.API.Controllers
 				}
 
 				result = await _calculatorService.CalculateClaim(request);
+				if (result.bSuccess == false)
+					return BadRequest(result);
 			}
 			catch (Exception ex)
 			{

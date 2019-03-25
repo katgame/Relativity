@@ -12,5 +12,7 @@ namespace relativityCalculator.Core.DTOs
 
 		[DataMember(Name = "vehicleDetail")]
 		public List<VehicleDetail> vehicleDetail { get; set; }
+		[DataMember(Name = "assessorId")]
+		public string assessorId { get; set; }
 	}
 }
