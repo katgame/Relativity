@@ -12,5 +12,7 @@ namespace relativityCalculator.Core.DTOs
 		public string recommendation { get; set; }
 		[DataMember(Name = "RecommendationList")]
 		public List<string> RecommendationList { get; set; }
+		[DataMember(Name = "auditTrailId")]
+		public string auditTrailId { get; set; }
 	}
 }

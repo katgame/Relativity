@@ -13,21 +13,28 @@
         </member>
         <member name="M:relativityCalculator.API.Controllers.RelativityController.AddAssessor(relativityCalculator.Core.Models.Assessor)">
             <summary>
-            Add Assessor
+            Add New Assessor 
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
         <member name="M:relativityCalculator.API.Controllers.RelativityController.GetAssessor">
             <summary>
-            Get Assessor
+            Get Assessor details
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
         <member name="M:relativityCalculator.API.Controllers.RelativityController.CalculateClaim(relativityCalculator.Core.DTOs.CalculateWriteOffInDTO)">
             <summary>
-            Get Assessor
+            Calculate Claim and get recemmendation
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:relativityCalculator.API.Controllers.RelativityController.UpdateComment(relativityCalculator.Core.DTOs.AuditTrailInDTO)">
+            <summary>
+            Update Claim Trail
             </summary>
             <param name="request"></param>
             <returns></returns>

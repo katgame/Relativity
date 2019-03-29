@@ -22,9 +22,9 @@ namespace relativityCalculator.API
 		public Startup(IHostingEnvironment env)
 		{
 			var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
-		.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-		.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-		.AddEnvironmentVariables();
+			.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+			.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+			.AddEnvironmentVariables();
 
 			Configuration = builder.Build();
 		}
@@ -38,14 +38,14 @@ namespace relativityCalculator.API
 			.AddXmlSerializerFormatters();
 			services.Configure<AppSettings>(Configuration.GetSection("Connections"));
 			services.AddDbContext<RelativitiesContext>();
-			services.AddTransient<IDbHandler, DbHandler>();
+			//services.AddTransient<IDbHandler, DbHandler>();
 			services.AddTransient<ICalculatorService, Core.Services.CalculatorService>();
 			services.AddTransient<IAssessorRepository, AssessorRepository>();
 			services.AddTransient<IRelativityRepository, RelativityRepository>();
 			services.AddTransient<IAreaRepository, AreaRepository>();
 			services.AddTransient<IRelativityConfig, RelativityConfigRepository>();
 			services.AddTransient<IAppSettings, AppSettings>();
-
+			services.AddTransient<IAuditTrailRepository, AuditTrialRepository>();
 			services.AddCors(options =>
 			{
 				options.AddPolicy("CorsPolicy",

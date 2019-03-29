@@ -22,12 +22,13 @@ namespace relativityCalculator.Core.Models
 			IAreaRepository areaRepository,
 			IRelativityConfig relativityConfig,
 			IAssessorRepository assessorRepository,
-			IAuditTrailRepository _auditTrailRepository)
+			IAuditTrailRepository auditTrailRepository)
 		{
 			_relativityRepository = relativityRepository;
 			_areaRepository = areaRepository;
 			_relativityConfig = relativityConfig;
 			_assessorRepository = assessorRepository;
+			_auditTrailRepository = auditTrailRepository;
 			KeysList = new List<Relativity>();
 		}
 
@@ -52,8 +53,8 @@ namespace relativityCalculator.Core.Models
 				var originalValue = item.RelativityKey;
 				MinValue = int.Parse(item.RelativityKey.Substring(0, item.RelativityKey.IndexOf('<')));
 				int lastIndex = item.RelativityKey.IndexOf("=");
-				item.RelativityKey = item.RelativityKey.Remove(0, lastIndex + 1);
-				MaxValue = int.Parse(item.RelativityKey);
+				var temp = item.RelativityKey.Remove(0, lastIndex + 1);
+				MaxValue = int.Parse(temp);
 
 				if ((value <= MinValue) && (value < MaxValue))
 					return originalValue;
@@ -88,7 +89,7 @@ namespace relativityCalculator.Core.Models
 			var response = new CalculateWriteOffOutDTO();
 			var Cost = new Costs();
 			try
-			{
+		{	
 			if(validateRelativities(request.vehicleDetail))
 			{
 					//3.	Cost of salvage = 3 507.50
@@ -120,7 +121,7 @@ namespace relativityCalculator.Core.Models
 					Cost.TotalRepairCost, double.Parse(request.vehicleDetail.vehicleSumInsured)).ToString();
 
 				//Log details
-
+				response.auditTrailId = LogCalculationResult(request, Cost, response.recommendation).ToString();
 				response.bSuccess = true;
 				return response;
 			}
@@ -139,7 +140,7 @@ namespace relativityCalculator.Core.Models
 			}
 		}
 
-		internal void LogCalculationResult(CalculateWriteOffInDTO request, Costs costs, string recommendation)
+		internal int LogCalculationResult(CalculateWriteOffInDTO request, Costs costs, string recommendation)
 		{
 			var LogDetails = new AuditTrail()
 			{
@@ -158,12 +159,12 @@ namespace relativityCalculator.Core.Models
 				VehicleModel = request.vehicleDetail.vehicleModel,
 				VehicleSumInsured = request.vehicleDetail.vehicleSumInsured,
 				VehicleYear = request.vehicleDetail.vehicleYear,
-				DifferenceInCost = costs.Saving.ToString()
+				DifferenceInCost = costs.Saving.ToString(),
+				Comments = string.Empty
 			};
 
-			_auditTrailRepository.Add(LogDetails);
-
-
+			var auditTrailId = _auditTrailRepository.Add(LogDetails);
+			return auditTrailId.Id;
 		}
 
 		internal Recommendation GetRecommendation(double saving, double TotalSalvageRecovery, double TotalRepairCost, double sumInsured)

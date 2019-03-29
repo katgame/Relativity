@@ -13,6 +13,7 @@ namespace relativityCalculator.Core.Contracts
 		Task<CalculateWriteOffOutDTO> CalculateClaim(CalculateWriteOffInDTO request);
 		void AddAssessor(Assessor assessor);
 		void UpdateAssessor(Assessor assessor);
+		bool UpdateAuditTrail(string claimNumber, string comments);
 		IEnumerable<Assessor> GetAssessorList();
 
 

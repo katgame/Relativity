@@ -10,6 +10,5 @@ namespace relativityCalculator.Core.Contracts
     public interface IDbHandler
     {
 		PolicyDetailsOutDTO GetPolicyVehicleDetails(string policyNumber);
-		Task<CalculateWriteOffOutDTO> CalculateClaim(CalculateWriteOffInDTO request);
 	}
 }

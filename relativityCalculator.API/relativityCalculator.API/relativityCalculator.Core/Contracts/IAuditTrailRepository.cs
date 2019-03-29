@@ -6,6 +6,6 @@ namespace relativityCalculator.Core.Contracts
 {
 	public interface IAuditTrailRepository : IRepository<AuditTrail>, IAsyncRepository<AuditTrail>
 	{
-		
+		bool UpdateComment(string claimNumber, string comment);
 	}
 }

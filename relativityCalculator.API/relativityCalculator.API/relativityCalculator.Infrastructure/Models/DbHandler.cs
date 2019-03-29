@@ -108,13 +108,5 @@ namespace relativityCalculator.Infrastructure.Models
 			}
 		}
 
-
-		public Task<CalculateWriteOffOutDTO> CalculateClaim(CalculateWriteOffInDTO request)
-		{
-			
-			throw new NotImplementedException();
-		}
-
-	
 	}
 }

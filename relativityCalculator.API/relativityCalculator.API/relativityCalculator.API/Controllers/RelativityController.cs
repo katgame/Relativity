@@ -53,7 +53,7 @@ namespace relativityCalculator.API.Controllers
 		}
 
 		/// <summary>
-		/// Add Assessor
+		/// Add New Assessor 
 		/// </summary>
 		/// <param name="request"></param>
 		/// <returns></returns>
@@ -84,7 +84,7 @@ namespace relativityCalculator.API.Controllers
 		}
 
 		/// <summary>
-		/// Get Assessor
+		/// Get Assessor details
 		/// </summary>
 		/// <param name="request"></param>
 		/// <returns></returns>
@@ -93,7 +93,7 @@ namespace relativityCalculator.API.Controllers
 		[ProducesResponseType(500)]
 		[Route("api/getAssessorList")]
 		[EnableCors("CorsPolicy")]
-		[HttpPost]
+		[HttpGet]
 		public async Task<IActionResult> GetAssessor()
 		{
 			IEnumerable<Assessor> result;
@@ -115,7 +115,7 @@ namespace relativityCalculator.API.Controllers
 
 
 		/// <summary>
-		/// Get Assessor
+		/// Calculate Claim and get recemmendation
 		/// </summary>
 		/// <param name="request"></param>
 		/// <returns></returns>
@@ -147,33 +147,34 @@ namespace relativityCalculator.API.Controllers
 		}
 
 		/// <summary>
-		/// Import Look Up sheet
+		/// Update Claim Trail
 		/// </summary>
 		/// <param name="request"></param>
 		/// <returns></returns>
-		//[ProducesResponseType(200)]
-		//[ProducesResponseType(400)]
-		//[ProducesResponseType(500)]
-		//[Route("api/importLookUp")]
-		//[EnableCors("CorsPolicy")]
-		//[HttpPost]
-		//public async Task<IActionResult> ImportFile([FromBody] VehicleDetail request)
-		//{
-		//	CalculateWriteOffOutDTO result;
-		//	try
-		//	{
-		//		if (!ModelState.IsValid)
-		//		{
-		//			return BadRequest(ModelState);
-		//		}
+		[ProducesResponseType(200)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(500)]
+		[Route("api/updatecomment")]
+		[EnableCors("CorsPolicy")]
+		[HttpPut]
+		public async Task<IActionResult> UpdateComment([FromBody] AuditTrailInDTO request)
+		{
+			bool result;
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
 
-		//		result = await _calculatorService.CalculateClaim(request);
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		return BadRequest("Error in a action calculate claim" + ex);
-		//	}
-		//	return new OkObjectResult(result);
-		//}
+				result = _calculatorService.UpdateAuditTrail(request.auditTrailId, request.comment);
+
+			}
+			catch (Exception ex)
+			{
+				return BadRequest("Error in a action update comment" + ex);
+			}
+			return new OkObjectResult(result);
+		}
 	}
 }
