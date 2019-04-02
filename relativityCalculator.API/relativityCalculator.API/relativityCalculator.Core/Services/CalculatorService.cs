@@ -6,37 +6,38 @@ using relativityCalculator.Core.Contracts;
 using relativityCalculator.Core.DTOs;
 using relativityCalculator.Core.Exceptions;
 using relativityCalculator.Core.Models;
+using System.Linq;
 
 namespace relativityCalculator.Core.Services
 {
     public class CalculatorService : ICalculatorService
     {
 		private IAssessorRepository _assessorRepository;
+		private IRelativityLookUpRepository _relativityLookUpRepository;
 		private IRelativityRepository _relativityRepository;
 		private IAreaRepository _areaRepository;
-		private IRelativityConfig _relativityConfig;
 		private IDbHandler _idbhandler;
 		private IAuditTrailRepository _auditTrailRepository;
 		internal ValidateClaim _claimCal;
 
         public CalculatorService(IDbHandler dbHandler,
 			IAssessorRepository assessorRepository,
-			IRelativityRepository relativityRepository,
+			IRelativityLookUpRepository relativityLookUpRepository,
 			IAreaRepository areaRepository,
-			IRelativityConfig relativityConfig,
-			IAuditTrailRepository auditTrailRepository)
+			IAuditTrailRepository auditTrailRepository,
+			IRelativityRepository relativityRepository)
         {
             _idbhandler = dbHandler;
 			_assessorRepository = assessorRepository;
-			_relativityRepository = relativityRepository;
+			_relativityLookUpRepository = relativityLookUpRepository;
 			_areaRepository = areaRepository;
-			_relativityConfig = relativityConfig;
 			_auditTrailRepository = auditTrailRepository;
-			_claimCal = new ValidateClaim(relativityRepository,
+			_relativityRepository = relativityRepository;
+			_claimCal = new ValidateClaim(relativityLookUpRepository,
 				_areaRepository, 
-			    _relativityConfig,
 				_assessorRepository,
-				_auditTrailRepository);
+				_auditTrailRepository,
+				relativityRepository);
 		}
 
 		public PolicyDetailsOutDTO GetPolicyVehicleDetails(string policyNumber)
@@ -56,7 +57,7 @@ namespace relativityCalculator.Core.Services
 
 		public void UpdateAssessor(Assessor assessor)
 		{
-			 _assessorRepository.Update(assessor);
+			 _assessorRepository.Update(assessor, assessor.Id.Value);
 		}
 
 		public async Task<CalculateWriteOffOutDTO> CalculateClaim(CalculateWriteOffInDTO request)
@@ -74,5 +75,14 @@ namespace relativityCalculator.Core.Services
 			return _auditTrailRepository.UpdateComment(claimNumber, comments);
 		}
 
+		public async Task<IList<Relativity>> GetRelativityGroup()
+		{
+			return await _relativityRepository.ListAllAsync();
+		}
+
+		public async Task<IList<RelativityLookUp>> GetRelativityByGroupId(string relativityId)
+		{
+			return _relativityLookUpRepository.ListAll().Where(x => x.RelativityId == relativityId).ToList();
+		}
 	}
 }

@@ -102,8 +102,9 @@ namespace relativityCalculator.Infrastructure.Models
 			return entity;
 		}
 
-		public void Update(T entity)
+		public void Update(T entity, int id)
 		{
+			entity.Id = id;
 			_dbContext.Entry(entity).State = EntityState.Modified;
 			_dbContext.SaveChanges();
 		}

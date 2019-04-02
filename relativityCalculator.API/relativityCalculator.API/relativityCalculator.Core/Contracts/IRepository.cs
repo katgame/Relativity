@@ -13,7 +13,7 @@ namespace relativityCalculator.Core.Contracts
 		IEnumerable<T> ListAll();
 		IEnumerable<T> List(ISpecification<T> spec);
 		T Add(T entity);
-		void Update(T entity);
+		void Update(T entity, int id);
 		void Delete(T entity);
 
 	}

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Cors;
 using relativityCalculator.Core.DTOs;
 using relativityCalculator.Core.Models;
 using relativityCalculator.Core.Contracts;
+using System.Linq;
 
 namespace relativityCalculator.API.Controllers
 {
@@ -70,7 +71,11 @@ namespace relativityCalculator.API.Controllers
 			{
 				if (!ModelState.IsValid)
 				{
+					//var message = string.Join(" | ", ModelState.Values
+				 // .SelectMany(v => v.Errors)
+				 // .Select(e => e.ErrorMessage));
 					return BadRequest(ModelState);
+					//return BadRequest(message);
 				}
 
 				_calculatorService.AddAssessor(request);
@@ -79,6 +84,68 @@ namespace relativityCalculator.API.Controllers
 			catch (Exception ex)
 			{
 				return BadRequest("Error in a action add assessor" + ex);
+			}
+			return new OkObjectResult(result);
+		}
+
+		/// <summary>
+		/// Update Assessor
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[ProducesResponseType(200)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(500)]
+		[Route("api/updateAssessor")]
+		[EnableCors("CorsPolicy")]
+		[HttpPost]
+		public async Task<IActionResult> UpdateAssessor([FromBody] Assessor request)
+		{
+			bool result;
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
+
+				_calculatorService.UpdateAssessor(request);
+				result = true;
+			}
+			catch (Exception ex)
+			{
+				return BadRequest("Error in a action update assessor" + ex);
+			}
+			return new OkObjectResult(result);
+		}
+
+		/// <summary>
+		/// Update Assessor
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[ProducesResponseType(200)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(500)]
+		[Route("api/deleteAssessor")]
+		[EnableCors("CorsPolicy")]
+		[HttpPost]
+		public async Task<IActionResult> DeleteAssessor([FromBody] Assessor request)
+		{
+			bool result;
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
+
+				_calculatorService.UpdateAssessor(request);
+				result = true;
+			}
+			catch (Exception ex)
+			{
+				return BadRequest("Error in a action update assessor" + ex);
 			}
 			return new OkObjectResult(result);
 		}
@@ -173,6 +240,67 @@ namespace relativityCalculator.API.Controllers
 			catch (Exception ex)
 			{
 				return BadRequest("Error in a action update comment" + ex);
+			}
+			return new OkObjectResult(result);
+		}
+
+		/// <summary>
+		/// Get Relativities
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[ProducesResponseType(200)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(500)]
+		[Route("api/getrelativitygroup")]
+		[EnableCors("CorsPolicy")]
+		[HttpGet]
+		public async Task<IActionResult> GetRelativityGroup()
+		{
+			IList<Relativity> result;
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
+
+				result = await _calculatorService.GetRelativityGroup();
+
+			}
+			catch (Exception ex)
+			{
+				return BadRequest("Error in a action get relativities" + ex);
+			}
+			return new OkObjectResult(result);
+		}
+
+		/// <summary>
+		/// Get Relativities
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[ProducesResponseType(200)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(500)]
+		[Route("api/getrelativitybygroup")]
+		[EnableCors("CorsPolicy")]
+		[HttpGet]
+		public async Task<IActionResult> GetRelativityByGroupName(string relativityId)
+		{
+			IList<RelativityLookUp> result;
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
+
+				result = await _calculatorService.GetRelativityByGroupId(relativityId);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest("Error in a action get relativities" + ex);
 			}
 			return new OkObjectResult(result);
 		}

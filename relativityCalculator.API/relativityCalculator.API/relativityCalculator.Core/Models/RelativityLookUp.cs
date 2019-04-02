@@ -7,9 +7,9 @@ namespace relativityCalculator.Core.Models
 {
     public partial class RelativityLookUp : BaseEntity, IAggregateRoot
 	{
-        public int Id { get; set; }
-        public string RelativityName { get; set; }
-        public string RelativityKey { get; set; }
-        public string RelativityValue { get; set; }
-    }
+		public int Id { get; set; }
+		public string RelativityId { get; set; }
+		public string RelativityKey { get; set; }
+		public string RelativityValue { get; set; }
+	}
 }

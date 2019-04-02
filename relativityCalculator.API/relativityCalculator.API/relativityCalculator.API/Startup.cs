@@ -38,12 +38,12 @@ namespace relativityCalculator.API
 			.AddXmlSerializerFormatters();
 			services.Configure<AppSettings>(Configuration.GetSection("Connections"));
 			services.AddDbContext<RelativitiesContext>();
-			//services.AddTransient<IDbHandler, DbHandler>();
+			services.AddTransient<IDbHandler, DbHandler>();
 			services.AddTransient<ICalculatorService, Core.Services.CalculatorService>();
 			services.AddTransient<IAssessorRepository, AssessorRepository>();
+			services.AddTransient<IRelativityLookUpRepository, RelativityLookUpRepository>();
 			services.AddTransient<IRelativityRepository, RelativityRepository>();
 			services.AddTransient<IAreaRepository, AreaRepository>();
-			services.AddTransient<IRelativityConfig, RelativityConfigRepository>();
 			services.AddTransient<IAppSettings, AppSettings>();
 			services.AddTransient<IAuditTrailRepository, AuditTrialRepository>();
 			services.AddCors(options =>

@@ -8,29 +8,26 @@ using System.Linq;
 
 namespace relativityCalculator.Infrastructure.Repository
 {
-	public class RelativityRepository : EfRepository<RelativityLookUp>, IRelativityRepository
+	public class RelativityRepository : EfRepository<Relativity>, IRelativityRepository
 	{
 		public RelativityRepository(RelativitiesContext dbContext) : base(dbContext)
 		{
 		}
-		public IList<string> GetActiveRelativities()
-		{
-			return _dbContext.RelativityLookUp.GroupBy(x => x.RelativityName).
-				Select(group => group.First()).Select(x => x.RelativityName).ToList();
-		}
-		public IList<Relativity> GetRelativityByKey(IList<Relativity> keys)
-		{
-			foreach (var item in keys)
-			{
-				item.RelativityValue = Convert.ToDouble(_dbContext.RelativityLookUp.FirstOrDefault(x => x.RelativityKey == item.RequestValue
-				&& x.RelativityName == item.RelativityName)?.RelativityValue);
-			}
-			return keys;
-		}
 
-		public IList<RelativityLookUp> GetRelativityByName(string Name)
+		public IList<Relativities> GetActiveRelativities()
 		{
-			return _dbContext.RelativityLookUp.Where(x => x.RelativityName == Name).ToList();
+
+			var result = new List<Relativities>();
+			_dbContext.Relativity.Where(x => x.Active == true).ToList().ForEach(delegate (Relativity relativity)
+			{
+				result.Add(new Relativities
+				{
+					RelativityName = relativity.Name,
+					Id = relativity.Id
+				});
+			});
+
+			return result;
 		}
 	}
 }

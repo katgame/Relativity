@@ -12,7 +12,7 @@ namespace relativityCalculator.Infrastructure.Models
         public virtual DbSet<AuditLog> AuditLog { get; set; }
         public virtual DbSet<AuditTrail> AuditTrail { get; set; }
         public virtual DbSet<CompanyType> CompanyType { get; set; }
-        public virtual DbSet<RelativityConfig> RelativityConfig { get; set; }
+        public virtual DbSet<Relativity> Relativity { get; set; }
         public virtual DbSet<RelativityLookUp> RelativityLookUp { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -97,17 +97,10 @@ namespace relativityCalculator.Infrastructure.Models
                     .HasColumnName("workNumber")
                     .HasMaxLength(150)
                     .IsUnicode(false);
-
-                entity.HasOne(d => d.CompanyType)
-                    .WithMany(p => p.Assessor)
-                    .HasForeignKey(d => d.CompanyTypeId)
-                    .HasConstraintName("FK_Assessor_CompanyType");
             });
 
             modelBuilder.Entity<AuditLog>(entity =>
             {
-                entity.Property(e => e.AuditActionTypeEnum).HasColumnName("AuditActionTypeENUM");
-
                 entity.Property(e => e.Changes).IsUnicode(false);
 
                 entity.Property(e => e.DataModel)
@@ -115,8 +108,6 @@ namespace relativityCalculator.Infrastructure.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.DateTimeStamp).HasColumnType("datetime");
-
-                entity.Property(e => e.KeyFieldId).HasColumnName("KeyFieldID");
 
                 entity.Property(e => e.ValueAfter).IsUnicode(false);
 
@@ -145,6 +136,8 @@ namespace relativityCalculator.Infrastructure.Models
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
                 entity.Property(e => e.DifferenceInCost)
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -155,6 +148,10 @@ namespace relativityCalculator.Infrastructure.Models
 
                 entity.Property(e => e.IncidentYear)
                     .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PolicyNumber)
+                    .HasMaxLength(50)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Recommendation)
@@ -201,29 +198,29 @@ namespace relativityCalculator.Infrastructure.Models
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<RelativityConfig>(entity =>
+            modelBuilder.Entity<Relativity>(entity =>
             {
-                entity.Property(e => e.PropertyGroup)
-                    .HasMaxLength(150)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.PropertyName)
-                    .HasMaxLength(150)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.PropertyValue)
-                    .HasMaxLength(150)
-                    .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<RelativityLookUp>(entity =>
-            {
-                entity.Property(e => e.RelativityKey)
+                entity.Property(e => e.Description)
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.RelativityName)
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+				entity.Property(e => e.Active)
+				  .HasMaxLength(1)
+				  .IsUnicode(false);
+			});
+
+            modelBuilder.Entity<RelativityLookUp>(entity =>
+            {
+                entity.Property(e => e.RelativityId)
                     .HasMaxLength(150)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RelativityKey)
+                    .HasMaxLength(50)
                     .IsUnicode(false);
 
                 entity.Property(e => e.RelativityValue)

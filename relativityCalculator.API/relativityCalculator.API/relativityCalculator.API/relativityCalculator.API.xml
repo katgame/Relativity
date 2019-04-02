@@ -18,6 +18,20 @@
             <param name="request"></param>
             <returns></returns>
         </member>
+        <member name="M:relativityCalculator.API.Controllers.RelativityController.UpdateAssessor(relativityCalculator.Core.Models.Assessor)">
+            <summary>
+            Update Assessor
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:relativityCalculator.API.Controllers.RelativityController.DeleteAssessor(relativityCalculator.Core.Models.Assessor)">
+            <summary>
+            Update Assessor
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
         <member name="M:relativityCalculator.API.Controllers.RelativityController.GetAssessor">
             <summary>
             Get Assessor details
@@ -35,6 +49,20 @@
         <member name="M:relativityCalculator.API.Controllers.RelativityController.UpdateComment(relativityCalculator.Core.DTOs.AuditTrailInDTO)">
             <summary>
             Update Claim Trail
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:relativityCalculator.API.Controllers.RelativityController.GetRelativityGroup">
+            <summary>
+            Get Relativities
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:relativityCalculator.API.Controllers.RelativityController.GetRelativityByGroupName(System.String)">
+            <summary>
+            Get Relativities
             </summary>
             <param name="request"></param>
             <returns></returns>

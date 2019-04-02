@@ -8,8 +8,7 @@ namespace relativityCalculator.Core.Models
     public partial class AuditLog : BaseEntity, IAggregateRoot
 	{
 		public int Id { get; set; }
-		public int? KeyFieldId { get; set; }
-		public int? AuditActionTypeEnum { get; set; }
+		public int? AuditAction { get; set; }
 		public DateTime? DateTimeStamp { get; set; }
 		public string DataModel { get; set; }
 		public string Changes { get; set; }

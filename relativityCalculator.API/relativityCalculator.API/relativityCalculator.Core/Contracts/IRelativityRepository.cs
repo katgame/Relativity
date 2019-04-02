@@ -5,11 +5,8 @@ using relativityCalculator.Core.Models;
 
 namespace relativityCalculator.Core.Contracts
 {
-	public interface IRelativityRepository : IRepository<RelativityLookUp>, IAsyncRepository<RelativityLookUp>
+	public interface IRelativityRepository : IRepository<Relativity>, IAsyncRepository<Relativity>
 	{
-		IList<Relativity> GetRelativityByKey(IList<Relativity> key);
-		IList<RelativityLookUp> GetRelativityByName(string Name);
-		IList<string> GetActiveRelativities();
-
+		IList<Relativities> GetActiveRelativities();
 	}
 }

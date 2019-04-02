@@ -10,26 +10,26 @@ namespace relativityCalculator.Core.Models
 {
 	public class ValidateClaim
 	{
+		private IRelativityLookUpRepository _relativityLookUpRepository;
 		private IRelativityRepository _relativityRepository;
-		private IRelativityConfig _relativityConfig; 
 		private IAreaRepository _areaRepository;
 		private IAssessorRepository _assessorRepository;
 		private IAuditTrailRepository _auditTrailRepository;
-		private List<Relativity> KeysList;
+		private IList<Relativities> KeysList;
 		private string NullRelativityError = "Could not find relativity value for ";
 		private StringBuilder ErrorResponseMessage;
-		public ValidateClaim(IRelativityRepository relativityRepository,
+		public ValidateClaim(IRelativityLookUpRepository relativityLookUpRepository,
 			IAreaRepository areaRepository,
-			IRelativityConfig relativityConfig,
 			IAssessorRepository assessorRepository,
-			IAuditTrailRepository auditTrailRepository)
+			IAuditTrailRepository auditTrailRepository,
+			IRelativityRepository relativityRepository)
 		{
+			_relativityLookUpRepository = relativityLookUpRepository;
 			_relativityRepository = relativityRepository;
 			_areaRepository = areaRepository;
-			_relativityConfig = relativityConfig;
 			_assessorRepository = assessorRepository;
 			_auditTrailRepository = auditTrailRepository;
-			KeysList = new List<Relativity>();
+			KeysList = new List<Relativities>();
 		}
 
 		public int CalculateVehicleAge(int vehicleYear)
@@ -42,9 +42,9 @@ namespace relativityCalculator.Core.Models
 			 return _areaRepository.GetArea(postalCode);
 	    }
 
-		private string GetRelativityKey(int value, string RelativityName)
+		private string GetRelativityKey(int value, string Id)
 		{
-			IList<RelativityLookUp> massRelativity = _relativityRepository.GetRelativityByName(RelativityName);
+			IList<RelativityLookUp> massRelativity = _relativityLookUpRepository.GetRelativityById(Id);
 			int MinValue, MaxValue;
 			foreach (var item in massRelativity)
 			{
@@ -56,7 +56,7 @@ namespace relativityCalculator.Core.Models
 				var temp = item.RelativityKey.Remove(0, lastIndex + 1);
 				MaxValue = int.Parse(temp);
 
-				if ((value <= MinValue) && (value < MaxValue))
+				if ((value > MinValue) && (value <= MaxValue))
 					return originalValue;
 			}
 			return "Unknown";
@@ -64,19 +64,45 @@ namespace relativityCalculator.Core.Models
 
 		public bool validateRelativities(VehicleDetail request)
 		{
-			
-			var activeRelaticities = _relativityRepository.GetActiveRelativities();
+
+			KeysList = _relativityRepository.GetActiveRelativities();
+
+			foreach (var item in KeysList)
+			{
+				//Map Front End Inputs
+				switch (item.RelativityName)
+				{
+					case "Make":
+						item.RequestValue = request.vehicleMake;
+
+						break;
+					case "Model":
+						item.RequestValue = request.vehicleModel;
+						break;
+					case "Mass":
+						item.RequestValue = GetRelativityKey(int.Parse(request.vehicleMass), item.Id.ToString());
+						break;
+					case "Vehicle_Age":
+						item.RequestValue = CalculateVehicleAge(int.Parse(request.vehicleYear)).ToString();
+						break;
+					case "Year":
+						item.RequestValue = request.incidentYear;
+					break;
+					case "Area":
+						item.RequestValue = GetArea(request.postalCode); //Fix postal code
+					break;
+					case "SI_Band":
+						item.RequestValue = GetRelativityKey(int.Parse(request.vehicleSumInsured), item.Id.ToString());
+					break;
+					default:
+						item.RequestValue = item.RelativityName;
+					break;
+				}
+			}
 
 			//UI Inputs
-			KeysList.Add(new Relativity { RelativityName = "Make", RequestValue = request.vehicleMake } );
-			KeysList.Add(new Relativity { RelativityName = "Model", RequestValue = request.vehicleModel });
-			KeysList.Add(new Relativity { RelativityName = "mass_band", RequestValue = GetRelativityKey(int.Parse(request.vehicleMass), "mass_band") });
-			KeysList.Add(new Relativity { RelativityName = "Vehicle_age", RequestValue = CalculateVehicleAge(int.Parse(request.vehicleYear)).ToString() });
-			KeysList.Add(new Relativity { RelativityName = "Year", RequestValue = request.incidentYear });
-			KeysList.Add(new Relativity { RelativityName = "Area", RequestValue = GetArea(request.region) });
-			KeysList.Add(new Relativity { RelativityName = "SI_Band", RequestValue = GetRelativityKey(int.Parse(request.vehicleSumInsured), "SI_Band") });
 
-			var relativityValues = _relativityRepository.GetRelativityByKey(KeysList);
+			var relativityValues = _relativityLookUpRepository.GetRelativityByKey(KeysList);
 
 			if (!areRelativityValueValid(relativityValues))
 				return false;
@@ -89,17 +115,17 @@ namespace relativityCalculator.Core.Models
 			var response = new CalculateWriteOffOutDTO();
 			var Cost = new Costs();
 			try
-		{	
+			{	
 			if(validateRelativities(request.vehicleDetail))
 			{
 					//3.	Cost of salvage = 3 507.50
-				Cost.CostOfSalvage = _relativityConfig.GetConfigValue("CostOfSalvalge");
+				Cost.CostOfSalvage = Convert.ToDouble(KeysList.FirstOrDefault(x => x.RelativityName == "CostOfSalvalge").RelativityValue);
 				Cost.CompanyPercentage = _assessorRepository.GetCompanyPercentage(int.Parse(request.assessorId)) ;
 				Cost.additionalCost = (Cost.CompanyPercentage / 100) * int.Parse(request.vehicleDetail.repairCost);
 
 					//2.	Total cost of repair = Cost of repair (incl. VAT) + Additional costs
 				Cost.TotalRepairCost = int.Parse(request.vehicleDetail.repairCost) + Cost.additionalCost;
-				Cost.BasePrice = _relativityConfig.GetConfigValue("Base");
+				Cost.BasePrice = Convert.ToDouble(KeysList.FirstOrDefault(x => x.RelativityName == "Base").RelativityValue);
 
 					//4.	Expected Salvage Recovery = Base * Incident year relativity * Make relativity * Model relativity *
 					//Age relativity * Sum insure relativity * Mass relativity * Area relativity *
@@ -160,7 +186,9 @@ namespace relativityCalculator.Core.Models
 				VehicleSumInsured = request.vehicleDetail.vehicleSumInsured,
 				VehicleYear = request.vehicleDetail.vehicleYear,
 				DifferenceInCost = costs.Saving.ToString(),
-				Comments = string.Empty
+				Comments = string.Empty,
+				CreatedDate = DateTime.Now,
+				PolicyNumber = request.policyNumber
 			};
 
 			var auditTrailId = _auditTrailRepository.Add(LogDetails);
@@ -194,7 +222,7 @@ namespace relativityCalculator.Core.Models
 
 		}
 
-		private bool areRelativityValueValid(IList<Relativity> relativityList)
+		private bool areRelativityValueValid(IList<Relativities> relativityList)
 		{
 			foreach (var item in relativityList)	
 			{
