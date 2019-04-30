@@ -14,9 +14,10 @@ namespace relativityCalculator.Core.Contracts
 		void AddAssessor(Assessor assessor);
 		void UpdateAssessor(Assessor assessor);
 		bool UpdateAuditTrail(string claimNumber, string comments);
+		void UpdateRelativity(UpdateRelativityInDTO request);
 		IEnumerable<Assessor> GetAssessorList();
 		Task<IList<Relativity>> GetRelativityGroup();
 		Task<IList<RelativityLookUp>> GetRelativityByGroupId(string relativityId);
-
+		Task<IList<AuditTrail>> GetAuditTrail();
 	}
 }

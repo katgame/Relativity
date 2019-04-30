@@ -7,7 +7,6 @@ namespace relativityCalculator.Core.Models
 {
     public class Assessor : BaseEntity, IAggregateRoot
 	{
-        public int? Id { get; set; }
         public string CompanyName { get; set; }
         public string CompanyRegNo { get; set; }
         public string FirstName { get; set; }

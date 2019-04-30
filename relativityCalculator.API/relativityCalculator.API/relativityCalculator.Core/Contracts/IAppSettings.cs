@@ -7,13 +7,13 @@ namespace relativityCalculator.Core.Contracts
     public interface IAppSettings
     {
         string ConnectionString { get; set; }
-        string MandateServiceURL { get; set; }
-        string FirstInceptionDate { get; set; }
-    }
+		string SQLocal { get; set; }
+		string SQLDev { get; set; }
+	}
     public class AppSettings : IAppSettings
     {
         public string ConnectionString { get; set; }
-        public string FirstInceptionDate { get; set; }
-        public string MandateServiceURL { get; set; }
-    }
+		public string SQLocal { get; set; }
+		public string SQLDev { get; set; }
+	}
 }

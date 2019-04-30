@@ -67,5 +67,19 @@
             <param name="request"></param>
             <returns></returns>
         </member>
+        <member name="M:relativityCalculator.API.Controllers.RelativityController.GetAuditTrail">
+            <summary>
+            Get Audit Trail
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:relativityCalculator.API.Controllers.RelativityController.UpdateRelativity(relativityCalculator.Core.DTOs.UpdateRelativityInDTO)">
+            <summary>
+            Update Relativity 
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

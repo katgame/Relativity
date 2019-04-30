@@ -29,7 +29,6 @@ namespace relativityCalculator.Core.Models
 			_areaRepository = areaRepository;
 			_assessorRepository = assessorRepository;
 			_auditTrailRepository = auditTrailRepository;
-			KeysList = new List<Relativities>();
 		}
 
 		public int CalculateVehicleAge(int vehicleYear)
@@ -114,17 +113,20 @@ namespace relativityCalculator.Core.Models
 		{
 			var response = new CalculateWriteOffOutDTO();
 			var Cost = new Costs();
+			KeysList = new List<Relativities>();
 			try
 			{	
 			if(validateRelativities(request.vehicleDetail))
 			{
 					//3.	Cost of salvage = 3 507.50
 				Cost.CostOfSalvage = Convert.ToDouble(KeysList.FirstOrDefault(x => x.RelativityName == "CostOfSalvalge").RelativityValue);
+
+				var assessorInfo = _assessorRepository.GetById(int.Parse(request.assessorId));
 				Cost.CompanyPercentage = _assessorRepository.GetCompanyPercentage(int.Parse(request.assessorId)) ;
-				Cost.additionalCost = (Cost.CompanyPercentage / 100) * int.Parse(request.vehicleDetail.repairCost);
+				Cost.additionalCost = (Cost.CompanyPercentage / 100) * double.Parse(request.vehicleDetail.repairCost);
 
 					//2.	Total cost of repair = Cost of repair (incl. VAT) + Additional costs
-				Cost.TotalRepairCost = int.Parse(request.vehicleDetail.repairCost) + Cost.additionalCost;
+				Cost.TotalRepairCost = double.Parse(request.vehicleDetail.repairCost) + Cost.additionalCost;
 				Cost.BasePrice = Convert.ToDouble(KeysList.FirstOrDefault(x => x.RelativityName == "Base").RelativityValue);
 
 					//4.	Expected Salvage Recovery = Base * Incident year relativity * Make relativity * Model relativity *
@@ -133,7 +135,8 @@ namespace relativityCalculator.Core.Models
 				Cost.ExpectedSalvageRecovery = Convert.ToDouble(Cost.BasePrice);
 				foreach (var item in KeysList)
 				{
-						Cost.ExpectedSalvageRecovery *= item.RelativityValue.Value;
+						if((item.RelativityName != "Base") && (item.RelativityName != "CostOfSalvalge"))
+							Cost.ExpectedSalvageRecovery *= item.RelativityValue.Value;
 				}
 				Cost.ExpectedSalvageRecovery = Math.Round(Cost.ExpectedSalvageRecovery, 5);
 
@@ -141,13 +144,13 @@ namespace relativityCalculator.Core.Models
 				Cost.TotalSalvageRecovery = Math.Round(Cost.ExpectedSalvageRecovery - Convert.ToDouble(Cost.CostOfSalvage),4);
 
 					//7.	Saving = |Sum insured(“market value”) – Total salvage recovery – Total cost of repair|. This must be the absolute value.
-				Cost.Saving = Math.Round(Convert.ToDouble(request.vehicleDetail.vehicleSumInsured)  - (Cost.TotalSalvageRecovery - Cost.TotalRepairCost), 0);
+				Cost.Saving = Math.Abs(Math.Round(Convert.ToDouble(request.vehicleDetail.vehicleSumInsured)  - (Cost.TotalSalvageRecovery + Cost.TotalRepairCost), 2));
 
 				response.recommendation = GetRecommendation(Cost.Saving, Cost.TotalSalvageRecovery,
 					Cost.TotalRepairCost, double.Parse(request.vehicleDetail.vehicleSumInsured)).ToString();
 
 				//Log details
-				response.auditTrailId = LogCalculationResult(request, Cost, response.recommendation).ToString();
+				response.auditTrailId = LogCalculationResult(request, Cost, response.recommendation, assessorInfo.FirstName + " " + assessorInfo.LastName).ToString();
 				response.bSuccess = true;
 				return response;
 			}
@@ -166,8 +169,9 @@ namespace relativityCalculator.Core.Models
 			}
 		}
 
-		internal int LogCalculationResult(CalculateWriteOffInDTO request, Costs costs, string recommendation)
+		internal int LogCalculationResult(CalculateWriteOffInDTO request, Costs costs, string recommendation, string assesorName)
 		{
+			
 			var LogDetails = new AuditTrail()
 			{
 				AdditionalCosts = costs.additionalCost.ToString(),
@@ -188,7 +192,8 @@ namespace relativityCalculator.Core.Models
 				DifferenceInCost = costs.Saving.ToString(),
 				Comments = string.Empty,
 				CreatedDate = DateTime.Now,
-				PolicyNumber = request.policyNumber
+				PolicyNumber = request.policyNumber,
+				Assessor = assesorName
 			};
 
 			var auditTrailId = _auditTrailRepository.Add(LogDetails);
@@ -224,10 +229,13 @@ namespace relativityCalculator.Core.Models
 
 		private bool areRelativityValueValid(IList<Relativities> relativityList)
 		{
+			var retryList = new List<Relativities>();
 			foreach (var item in relativityList)	
 			{
 				if (double.IsNaN(item.RelativityValue.Value) || item.RelativityValue.Value == 0)
 				{
+					//Retry
+
 					NullRelativityError +=  "Vehicle " + item.RelativityName;
 					ErrorResponseMessage = new StringBuilder(NullRelativityError);
 					ErrorResponseMessage.Insert(NullRelativityError.Length, " : " + item.RequestValue);

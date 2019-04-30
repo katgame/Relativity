@@ -2,12 +2,24 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using relativityCalculator.Core.Models;
+using relativityCalculator.Core.Contracts;
+using Microsoft.Extensions.Options;
+using System.Linq;
 
 namespace relativityCalculator.Infrastructure.Models
 {
     public partial class RelativitiesContext : DbContext
     {
-        public virtual DbSet<AreasLookUp> AreasLookUp { get; set; }
+		private readonly string _connectionString;
+		private readonly IOptions<AppSettings> _config;
+
+		public RelativitiesContext(IOptions<AppSettings> config)
+		{
+			_config = config;
+			_connectionString = config.Value.SQLocal;
+		}
+
+		public virtual DbSet<AreasLookUp> AreasLookUp { get; set; }
         public virtual DbSet<Assessor> Assessor { get; set; }
         public virtual DbSet<AuditLog> AuditLog { get; set; }
         public virtual DbSet<AuditTrail> AuditTrail { get; set; }
@@ -17,12 +29,14 @@ namespace relativityCalculator.Infrastructure.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
+
+			if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer(@"Server=19289JNBMIT001\SQLEXPRESS;Database=Relativities;Trusted_Connection=True;");
-            }
-        }
+				#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.          
+				optionsBuilder.UseSqlServer(_connectionString);
+		
+			}
+		}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -103,7 +117,7 @@ namespace relativityCalculator.Infrastructure.Models
             {
                 entity.Property(e => e.Changes).IsUnicode(false);
 
-                entity.Property(e => e.DataModel)
+                entity.Property(e => e.ItemId)
                     .HasMaxLength(150)
                     .IsUnicode(false);
 
@@ -189,7 +203,11 @@ namespace relativityCalculator.Infrastructure.Models
                 entity.Property(e => e.VehicleYear)
                     .HasMaxLength(50)
                     .IsUnicode(false);
-            });
+
+				entity.Property(e => e.Assessor)
+				  .HasMaxLength(50)
+				  .IsUnicode(false);
+			});
 
             modelBuilder.Entity<CompanyType>(entity =>
             {
@@ -228,5 +246,50 @@ namespace relativityCalculator.Infrastructure.Models
                     .IsUnicode(false);
             });
         }
-    }
+
+		public override int SaveChanges()
+		{
+			var modifiedEntities = ChangeTracker.Entries()
+				.Where(p => p.State == EntityState.Modified).ToList();
+			var now = DateTime.UtcNow;
+			string Id = string.Empty;
+			foreach (var change in modifiedEntities)
+			{
+				var entityName = change.Entity.GetType().Name;
+				foreach (var prop in change.OriginalValues.Properties)
+				{
+					
+					if(getColumnName(prop.GetFieldName()) ==  "Id")
+						Id = change.GetDatabaseValues().GetValue<object>(prop.Name).ToString();
+					var originalValue = change.GetDatabaseValues().GetValue<object>(prop.Name).ToString();
+					var currentValue = change.CurrentValues[prop].ToString();
+					if (!originalValue.Equals(currentValue))
+					{
+						//var reason = change.OriginalValues.Properties.Where(x => x.Name == "UpdateReason").Select(y => y.ValueGenerated);
+						var log = new AuditLog()
+						{
+							ItemId = Convert.ToInt32(Id),
+							TableName = entityName,
+							Changes = getColumnName(prop.GetFieldName()),
+							ValueBefore = originalValue.ToString(),
+							ValueAfter = currentValue,
+							DateTimeStamp = now
+						};
+						AuditLog.Add(log);
+						EfRepository<AuditLog>._auditLog = log;
+					}
+				}
+			}
+			return base.SaveChanges();
+		}
+
+		internal String getColumnName(string value)
+		{
+			int startPos = value.IndexOf('<') +1 ;
+			int end = value.IndexOf('>') - 1;
+			return value.Substring(startPos, end);
+		}
+
+	}
+
 }

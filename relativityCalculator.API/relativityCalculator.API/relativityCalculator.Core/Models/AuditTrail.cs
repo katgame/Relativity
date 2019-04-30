@@ -6,7 +6,6 @@ namespace relativityCalculator.Core.Models
 {
     public partial class AuditTrail : BaseEntity, IAggregateRoot
 	{
-		public int Id { get; set; }
 		public string ClaimNumer { get; set; }
 		public string IncidentYear { get; set; }
 		public string VehicleSumInsured { get; set; }
@@ -26,5 +25,6 @@ namespace relativityCalculator.Core.Models
 		public string Comments { get; set; }
 		public string PolicyNumber { get; set; }
 		public DateTime? CreatedDate { get; set; }
+		public string Assessor { get; set; }
 	}
 }

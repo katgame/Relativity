@@ -24,6 +24,15 @@ namespace relativityCalculator.Infrastructure.Repository
 			return keys;
 		}
 
+		public Relativities GetRelativityBykeyPartialMatch(Relativities keys)
+		{
+
+			  keys.RelativityValue = Convert.ToDouble(_dbContext.RelativityLookUp.FirstOrDefault(x => x.RelativityKey.Contains(keys.RequestValue)
+		      && x.RelativityId == keys.Id.ToString())?.RelativityValue);
+			
+			return keys;
+		}
+
 		public IList<RelativityLookUp> GetRelativityById(string Id)
 		{
 			return _dbContext.RelativityLookUp.Where(x => x.RelativityId == Id).ToList();

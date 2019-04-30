@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using relativityCalculator.Core.Entities;
+using relativityCalculator.Core.Models;
 
 namespace relativityCalculator.Core.Contracts
 {
@@ -13,7 +14,7 @@ namespace relativityCalculator.Core.Contracts
 		IEnumerable<T> ListAll();
 		IEnumerable<T> List(ISpecification<T> spec);
 		T Add(T entity);
-		void Update(T entity, int id);
+		AuditLog Update(T entity);
 		void Delete(T entity);
 
 	}

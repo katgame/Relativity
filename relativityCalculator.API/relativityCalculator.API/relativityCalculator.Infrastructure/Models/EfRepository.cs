@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
-
+using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using relativityCalculator.Core.Contracts;
+using relativityCalculator.Core.Models;
 using relativityCalculator.Core.Entities;
 
 namespace relativityCalculator.Infrastructure.Models
@@ -13,11 +14,13 @@ namespace relativityCalculator.Infrastructure.Models
 	public class EfRepository<T> : IRepository<T>, IAsyncRepository<T> where T : BaseEntity
 	{
 		protected readonly RelativitiesContext _dbContext;
+		public static AuditLog _auditLog;
 
 		public EfRepository(RelativitiesContext dbContext)
 		{
 			_dbContext = dbContext;
 		}
+
 
 		public virtual T GetById(int id)
 		{
@@ -102,11 +105,19 @@ namespace relativityCalculator.Infrastructure.Models
 			return entity;
 		}
 
-		public void Update(T entity, int id)
+		public AuditLog Update(T entity)
 		{
-			entity.Id = id;
-			_dbContext.Entry(entity).State = EntityState.Modified;
-			_dbContext.SaveChanges();
+			try
+			{
+				_dbContext.Entry(entity).State = EntityState.Modified;
+				_dbContext.SaveChanges();
+				return EfRepository<AuditLog>._auditLog;
+			}
+			catch(Exception ex)
+			{
+				throw ex;
+			}
+
 		}
 		public async Task UpdateAsync(T entity)
 		{

@@ -304,5 +304,66 @@ namespace relativityCalculator.API.Controllers
 			}
 			return new OkObjectResult(result);
 		}
+
+		/// <summary>
+		/// Get Audit Trail
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[ProducesResponseType(200)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(500)]
+		[Route("api/getaudittrail")]
+		[EnableCors("CorsPolicy")]
+		[HttpGet]
+		public async Task<IActionResult> GetAuditTrail ()
+		{
+			IList<AuditTrail> result;
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
+
+				result = await _calculatorService.GetAuditTrail();
+			}
+			catch (Exception ex)
+			{
+				return BadRequest("Error in a action get audit trail" + ex);
+			}
+			return new OkObjectResult(result);
+		}
+
+		/// <summary>
+		/// Update Relativity 
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[ProducesResponseType(200)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(500)]
+		[Route("api/updaterelativity")]
+		[EnableCors("CorsPolicy")]
+		[HttpPut]
+		public async Task<IActionResult> UpdateRelativity([FromBody] UpdateRelativityInDTO request)
+		{
+			bool result;
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
+
+				_calculatorService.UpdateRelativity(request);
+				
+			}
+			catch (Exception ex)
+			{
+				return BadRequest("Error in a action update relativity" + ex);
+			}
+			return new OkObjectResult(true);
+		}
 	}
 }

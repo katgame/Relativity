@@ -18,6 +18,7 @@ namespace relativityCalculator.Core.Services
 		private IAreaRepository _areaRepository;
 		private IDbHandler _idbhandler;
 		private IAuditTrailRepository _auditTrailRepository;
+		private IAuditLogRepository _auditLogRepository;
 		internal ValidateClaim _claimCal;
 
         public CalculatorService(IDbHandler dbHandler,
@@ -25,6 +26,7 @@ namespace relativityCalculator.Core.Services
 			IRelativityLookUpRepository relativityLookUpRepository,
 			IAreaRepository areaRepository,
 			IAuditTrailRepository auditTrailRepository,
+			IAuditLogRepository auditLogRepository,
 			IRelativityRepository relativityRepository)
         {
             _idbhandler = dbHandler;
@@ -33,6 +35,7 @@ namespace relativityCalculator.Core.Services
 			_areaRepository = areaRepository;
 			_auditTrailRepository = auditTrailRepository;
 			_relativityRepository = relativityRepository;
+			_auditLogRepository = auditLogRepository;
 			_claimCal = new ValidateClaim(relativityLookUpRepository,
 				_areaRepository, 
 				_assessorRepository,
@@ -57,7 +60,7 @@ namespace relativityCalculator.Core.Services
 
 		public void UpdateAssessor(Assessor assessor)
 		{
-			 _assessorRepository.Update(assessor, assessor.Id.Value);
+			 _assessorRepository.Update(assessor);
 		}
 
 		public async Task<CalculateWriteOffOutDTO> CalculateClaim(CalculateWriteOffInDTO request)
@@ -83,6 +86,25 @@ namespace relativityCalculator.Core.Services
 		public async Task<IList<RelativityLookUp>> GetRelativityByGroupId(string relativityId)
 		{
 			return _relativityLookUpRepository.ListAll().Where(x => x.RelativityId == relativityId).ToList();
+		}
+
+		public async Task<IList<AuditTrail>> GetAuditTrail()
+		{
+			return await _auditTrailRepository.ListAllAsync();
+		}
+
+		public void UpdateRelativity(UpdateRelativityInDTO request)
+		{
+			var NewLogTrail = _relativityLookUpRepository.Update(request.relativity);
+			if (NewLogTrail != null)
+				UpdateLogReason(NewLogTrail, request.UpdateReason, request.UserId.ToString());
+		}
+
+		internal void UpdateLogReason(AuditLog auditLog, string reason, string userId)
+		{
+			auditLog.UpdateReason = reason;
+			auditLog.UserId = userId;
+			_auditLogRepository.UpdateAsync(auditLog);
 		}
 	}
 }

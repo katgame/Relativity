@@ -46,6 +46,7 @@ namespace relativityCalculator.API
 			services.AddTransient<IAreaRepository, AreaRepository>();
 			services.AddTransient<IAppSettings, AppSettings>();
 			services.AddTransient<IAuditTrailRepository, AuditTrialRepository>();
+			services.AddTransient<IAuditLogRepository, AuditLogRepository>();
 			services.AddCors(options =>
 			{
 				options.AddPolicy("CorsPolicy",
